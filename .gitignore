@@ -1,0 +1,15 @@
+# 构建产物
+out/
+build/
+frontend/dist/
+
+# 依赖
+frontend/node_modules/
+
+# 系统与编辑器
+.DS_Store
+Thumbs.db
+*.log
+
+# Python（嵌入工具运行时的缓存）
+__pycache__/
