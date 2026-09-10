@@ -69,7 +69,7 @@ def main():
     lines.append("}")
     lines.append("}  // namespace tour::embed")
 
-    with open(a.out, "w") as fh:
+    with open(a.out, "w", encoding="utf-8") as fh:
         fh.write("\n".join(lines) + "\n")
     size = sum(len(d) for _, d in entries) + len(default_data)
     print(f"generated {a.out}: {len(entries)} files, {size} bytes")
