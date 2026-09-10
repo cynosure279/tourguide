@@ -1,0 +1,23 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "tour-guide",
+  "version": "1.0.0",
+  "identifier": "com.cynosure.tour-guide",
+  "build": {
+    "beforeDevCommand": "bash scripts/build-app.sh",
+    "beforeBuildCommand": "bash scripts/build-app.sh",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": ["icons/icon.png", "icons/icon.icns", "icons/icon.ico"],
+    "externalBin": ["binaries/tour-backend"]
+  }
+}
