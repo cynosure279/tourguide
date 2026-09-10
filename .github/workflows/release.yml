@@ -127,12 +127,7 @@ jobs:
           path: artifacts
           merge-multiple: true
 
-      - name: 列出全部产物（递归展开 bundle 目录）
-        run: |
-          find artifacts -type f | sort
-          find artifacts -type f > files.txt
-
       - uses: softprops/action-gh-release@v2
         with:
-          files: files.txt
+          files: artifacts/**
           generate_release_notes: true
