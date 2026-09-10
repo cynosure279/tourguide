@@ -12,7 +12,7 @@ npm run build
 echo "== 2/3 构建后端内嵌版（EMBED_FRONTEND）=="
 cd "$ROOT"
 cmake -S . -B build-app -DCMAKE_BUILD_TYPE=Release -DEMBED_FRONTEND=ON
-cmake --build build-app
+cmake --build build-app --config Release
 
 echo "== 3/3 复制侧车 =="
 # 目标三元组探测：rustc > Tauri 环境变量 > uname 推断
@@ -31,7 +31,11 @@ if [ -z "$TRIPLE" ]; then
       esac ;;
   esac
 fi
-BIN=$(find "$ROOT/build-app" -name "tour-backend*" -type f ! -name "*.pdb" | head -1)
+# MSVC 多配置产物在 Release/ 下；优先取 Release 版本
+BIN=$(find "$ROOT/build-app" -path "*/Release/*" -name "tour-backend*" -type f ! -name "*.pdb" | head -1)
+if [ -z "$BIN" ]; then
+  BIN=$(find "$ROOT/build-app" -name "tour-backend*" -type f ! -name "*.pdb" | head -1)
+fi
 if [ -z "$BIN" ]; then
   echo "错误：未找到后端可执行文件（build-app 构建可能失败）"
   exit 1
@@ -41,5 +45,10 @@ if [ -z "$TRIPLE" ]; then
   exit 1
 fi
 mkdir -p "$FRONTEND_DIR/src-tauri/binaries"
-cp "$BIN" "$FRONTEND_DIR/src-tauri/binaries/tour-backend-$TRIPLE"
-echo "侧车就绪：tour-backend-$TRIPLE（$BIN）"
+SUFFIX=""
+case "$(uname -s)" in
+  MINGW*|MSYS*|CYGWIN*) SUFFIX=".exe" ;;
+esac
+DEST="$FRONTEND_DIR/src-tauri/binaries/tour-backend-$TRIPLE$SUFFIX"
+cp "$BIN" "$DEST"
+echo "侧车就绪：tour-backend-$TRIPLE$SUFFIX（$BIN）"
