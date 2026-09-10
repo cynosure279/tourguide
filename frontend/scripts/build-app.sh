@@ -17,6 +17,11 @@ cmake --build build-app
 echo "== 3/3 复制侧车 =="
 TRIPLE="$(rustc -vV 2>/dev/null | sed -n 's/^host: //p')"
 if [ -z "$TRIPLE" ]; then echo "错误：找不到 rustc（请先安装 Rust）"; exit 1; fi
+BIN=$(find "$ROOT/build-app" -name "tour-backend*" -type f ! -name "*.pdb" | head -1)
+if [ -z "$BIN" ]; then
+  echo "错误：未找到后端可执行文件（build-app 构建可能失败）"
+  exit 1
+fi
 mkdir -p "$FRONTEND_DIR/src-tauri/binaries"
-cp "$ROOT/build-app/backend/tour-backend" "$FRONTEND_DIR/src-tauri/binaries/tour-backend-$TRIPLE"
-echo "侧车就绪：tour-backend-$TRIPLE"
+cp "$BIN" "$FRONTEND_DIR/src-tauri/binaries/tour-backend-$TRIPLE"
+echo "侧车就绪：tour-backend-$TRIPLE（$BIN）"
