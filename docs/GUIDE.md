@@ -80,6 +80,28 @@ cmake --build build-embed
 
 地图可滚轮缩放、拖拽平移；悬停节点显示简介信息卡。最短路径页可切换 5 种算法（Dijkstra 朴素/堆优化、Bellman-Ford、SPFA、Floyd）并一键互验。
 
+### 方式 D：桌面应用（Tauri，推荐给最终用户）
+
+项目含一个 Tauri（Rust）桌面壳：原生窗口 + 内嵌后端侧车，打包成各平台安装包。
+
+```bash
+cd frontend
+npm install          # 首次安装依赖（含 @tauri-apps/cli）
+npx tauri build      # 自动：构建前端 → 构建内嵌后端 → 打包
+```
+
+产物（macOS 示例）：
+
+```
+frontend/src-tauri/target/release/bundle/macos/tour-guide.app
+frontend/src-tauri/target/release/bundle/dmg/tour-guide_1.0.0_aarch64.dmg
+```
+
+- 首次打开 .app 如果被系统拦截（未签名应用）：右键 → 打开 → 确认即可
+- 应用启动 = 自动拉起内嵌后端（8080）→ 打开窗口加载系统页面；退出时自动关闭后端
+- 端口被占用时显示"启动失败"错误页
+- Windows（.msi/.exe）、Linux（.deb/AppImage）由 CI 的 `desktop` job 打包
+
 ## 4. 冒烟测试
 
 后端运行时执行 `backend/scripts/smoke.sh`，自动覆盖全部接口（含错误用例），结尾自动恢复默认数据。
@@ -106,7 +128,7 @@ git push origin release
 ## 6. CI/CD（GitHub Actions）
 
 - **ci.yml**：每次 push/PR 自动在 Linux/macOS/Windows 三平台构建前端与后端，并做接口冒烟测试。
-- **release.yml**：在 `release` 分支推送 `v*` 标签（如 `v1.0.0`）时触发：三平台编译**内嵌版单文件**，打包成 `tour-backend-<平台>.tar.gz / .zip`，自动创建 GitHub Release 并挂载产物。
+- **release.yml**：在 `release` 分支推送 `v*` 标签（如 `v1.0.0`）时触发：三平台编译**内嵌版单文件** + **Tauri 桌面应用**（macOS .dmg / Windows .msi / Linux .deb），自动创建 GitHub Release 并挂载全部产物。
 
 ```bash
 git checkout release
