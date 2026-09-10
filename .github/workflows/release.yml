@@ -111,11 +111,19 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           projectPath: frontend
+      - name: 收集桌面安装包（过滤 AppDir 中间文件）
+        run: |
+          mkdir -p desktop-pkg
+          find frontend/src-tauri/target/release/bundle -type f \
+            \( -name "*.dmg" -o -name "*.msi" -o -name "*.deb" -o -name "*.rpm" \
+               -o -name "*.AppImage" -o -name "*.exe" -o -name "*.app.tar.gz" \) \
+            -exec cp {} desktop-pkg/ \;
+          ls -la desktop-pkg/
       - name: 上传桌面安装包
         uses: actions/upload-artifact@v4
         with:
           name: desktop-${{ matrix.name }}
-          path: frontend/src-tauri/target/release/bundle/
+          path: desktop-pkg/
 
   publish:
     name: 发布 GitHub Release
