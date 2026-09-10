@@ -72,7 +72,7 @@ def main():
     with open(a.out, "w") as fh:
         fh.write("\n".join(lines) + "\n")
     size = sum(len(d) for _, d in entries) + len(default_data)
-    print(f"已生成 {a.out}：{len(entries)} 个文件，共 {size} 字节")
+    print(f"generated {a.out}: {len(entries)} files, {size} bytes")
 
 
 if __name__ == "__main__":
